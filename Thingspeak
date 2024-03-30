@@ -1,0 +1,43 @@
+//To send data from ESP8266 Witty Cloud Development Board on ThingSpeak cloud.
+
+
+#include <ESP8266WiFi.h>
+#include <ThingSpeak.h>
+
+#define led 2
+#define red 15
+#define green 12
+#define blue 13
+#define ldr A0
+
+WiFiClient Client;
+long mychannelNumber=2477890;
+const char mywriteAPIkey[]="AP1UIS5WEK2ANW8Q";
+WiFiServer server(80);
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(led,OUTPUT);
+  pinMode(green, OUTPUT);
+  pinMode(red, OUTPUT);
+  pinMode(blue, OUTPUT);
+  pinMode(ldr, INPUT);
+  Serial.begin(9600);
+  WiFi.begin("Galaxy A22 5G","edvf6460");
+  while(WiFi.status()!=WL_CONNECTED){
+    Serial.print('.');
+    delay(200);
+  }
+  Serial.println();
+  Serial.println("Witty board connected!");
+  Serial.println(WiFi.localIP());
+  ThingSpeak.begin(Client);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  int value=analogRead(ldr);
+  Serial.println(value);
+  ThingSpeak.writeField(mychannelNumber,1,value,mywriteAPIkey);
+  delay(200);
+}
